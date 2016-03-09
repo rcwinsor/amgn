@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Multicellular Adaptive Gene Network (Rachel Winsor BioMEMs Course)</title>
+        <title>Multicellular Adaptive Gene Network (Yong-Jun Shin, UCONN CSML 2015)</title>
 
         <!-- External javascript files -->
         <script src="http://www.babylonjs.com/hand.minified-1.2.js"></script>
@@ -208,8 +208,26 @@
                     antigen[x] = new Array(numY);
                 }
 
+                //Randomly select cells for antigen activation
+                for (var x = 0; x < numX; x++) {
+                    for (var y = 0; y < numY; y++) {
+
+                        if (Math.random () < probAgStim && x > minX && x < maxX && y > minY && y < maxY) {
+                            antigen[x][y] = agLevel;
+                        }
+                        else  antigen[x][y] = 0;
+                    }
+                }
+
                 //Canvas background color
                 scene.clearColor = new BABYLON.Color3(1, 1, 1);
+
+                //Setting initial values for adaptation
+                var mu0 = 0.1;
+                var epsilon = 0.000001;
+                var w1 = 0.1;
+                var w2 = 0.1;
+                var iteration = 0;
 
                 scene.registerBeforeRender(function () {
 
@@ -221,8 +239,8 @@
 
                     document.getElementById("iteration").innerText = "Iteration: " + iteration;
 
+                    env[25][25].material.alpha = 1
                     // diffusion
-                    env[25][25].material.alpha = 1;
                     for (var x = 1; x < numX - 1; x++) {
                         for (var y = 1; y < numY - 1; y++) {
                             env[x][y].material.alpha += diffusion * (env[x + 1][y].material.alpha - 2 * env[x][y].material.alpha + env[x - 1][y].material.alpha
